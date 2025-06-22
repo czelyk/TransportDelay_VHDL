@@ -1,0 +1,41 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity Motor_Control is
+    Port ( clk    : in  STD_LOGIC;
+           reset  : in  STD_LOGIC := '0';
+           enable : in  STD_LOGIC := '1';
+           stop   : in  STD_LOGIC  := '0';
+           start  : in  STD_LOGIC := '0';
+      
+           motor : out  STD_LOGIC  := 'Z');
+end Motor_Control;
+
+architecture Behavioral of Motor_Control is
+    signal motor_state : STD_LOGIC := '0';  -- Motor output state, initialized to '0'
+    signal stop_delay : time := 5 us;  -- 5 microsecond delay for the stop signal
+begin
+    process(clk, reset, start, stop, enable)
+    begin
+          
+        if enable  = '0' then 
+              if reset = '1' then
+                  motor_state <= '0';
+              elsif clk'event and clk ='1' then  -- r?s?ng_edge(clk) 
+            
+                  if stop = '0' then
+                        motor_state <= start;
+                  else 
+                      
+                      motor_state <= '0';
+                  end if;
+              end if;
+     
+        else 
+           motor <= 'Z';
+        end if;
+   end process;
+    motor <= motor_state;  -- Assign motor state to the output
+
+end Behavioral;
+
